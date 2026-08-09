@@ -102,14 +102,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo credentials hint — remove before production */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800 space-y-1">
-          <p className="font-semibold">Demo credentials (Phase 1)</p>
-          <p>admin@pbtsc.com / anypassword → Admin</p>
-          <p>coach@pbtsc.com / anypassword → Coach</p>
-          <p>parent@pbtsc.com / anypassword → Parent</p>
-        </div>
-
         <p className="text-center text-sm text-gray-500">
           <Link href="/" className="text-green-700 hover:underline">
             ← Back to home

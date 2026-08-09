@@ -8,6 +8,7 @@ import TabNav, { NavItem } from "@/components/layout/TabNav";
 
 const adminNav: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: "🏠" },
+  { label: "Users", href: "/admin/users", icon: "👤" },
   { label: "Players", href: "/admin/players", icon: "👦" },
   { label: "Coaches", href: "/admin/coaches", icon: "🧑‍🏫" },
   { label: "Practices", href: "/admin/practices", icon: "📅" },

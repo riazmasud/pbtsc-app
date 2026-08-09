@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/firestore";
 import { Coach } from "@/types";
-import { toISO } from "./_converters";
+import { toISO, clean } from "./_converters";
 
 const COL = "coaches";
 
@@ -34,7 +34,7 @@ export async function createCoach(
   data: Omit<Coach, "id" | "createdAt">
 ): Promise<Coach> {
   const ref = await addDoc(collection(db, COL), {
-    ...data,
+    ...clean(data),
     createdAt: serverTimestamp(),
   });
   return { id: ref.id, ...data, createdAt: new Date().toISOString() };

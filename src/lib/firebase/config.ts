@@ -17,4 +17,4 @@ if (!getApps().length) {
   app = getApps()[0];
 }
 
-export { app };
+export { app, firebaseConfig };

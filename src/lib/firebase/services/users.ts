@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/firestore";
 import { UserProfile, UserRole } from "@/types";
-import { toISO } from "./_converters";
+import { toISO, clean } from "./_converters";
 
 const COL = "users";
 
@@ -34,7 +34,7 @@ export async function createUserProfile(
   uid: string,
   data: Omit<UserProfile, "uid" | "createdAt">
 ): Promise<UserProfile> {
-  const payload = { ...data, createdAt: serverTimestamp() };
+  const payload = { ...clean(data), createdAt: serverTimestamp() };
   await setDoc(doc(db, COL, uid), payload);
   return { uid, ...data, createdAt: new Date().toISOString() };
 }

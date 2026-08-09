@@ -11,28 +11,21 @@ export default function ParentSchedulePage() {
 
       <div className="space-y-3">
         {/* TODO Phase 2: Map over practices from Firestore */}
-        <div className="text-center py-8">
-          <Card className="p-8 text-gray-400">
-            <p className="text-4xl mb-3">📅</p>
-            <p className="text-sm font-medium text-gray-600">No practices scheduled</p>
-            <p className="text-xs mt-1">
-              Phase 2: schedule will be loaded from Firestore.
-            </p>
-          </Card>
-        </div>
-
-        {/* Placeholder practice card shape */}
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="p-4 opacity-40">
+        {[
+          { day: "SAT", date: "16", time: "9:00 – 10:00 AM", location: "Field 3, Main Complex", coach: "Mr. Shohug" },
+          { day: "TUE", date: "19", time: "5:30 – 6:30 PM", location: "Field 1, Main Complex", coach: "Mr. Shohug" },
+          { day: "SAT", date: "23", time: "9:00 – 10:00 AM", location: "Field 3, Main Complex", coach: "Mr. Saif" },
+        ].map((practice, i) => (
+          <Card key={i} className="p-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-green-100 rounded-xl flex flex-col items-center justify-center shrink-0">
-                <div className="h-3 bg-green-200 rounded w-8 animate-pulse mb-1" />
-                <div className="h-4 bg-green-200 rounded w-6 animate-pulse" />
+                <p className="text-[10px] font-semibold text-green-700">{practice.day}</p>
+                <p className="text-lg font-bold text-green-800">{practice.date}</p>
               </div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-100 rounded w-32 animate-pulse" />
-                <div className="h-3 bg-gray-100 rounded w-48 animate-pulse" />
-                <div className="h-3 bg-gray-100 rounded w-24 animate-pulse" />
+              <div>
+                <p className="font-semibold text-sm text-gray-900">{practice.time}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{practice.location}</p>
+                <p className="text-xs text-gray-500">{practice.coach}</p>
               </div>
             </div>
           </Card>

@@ -28,6 +28,7 @@
 - `/` — landing page
 - `/login` — login page (role-based redirect after sign-in)
 - `/admin` — admin dashboard
+- `/admin/users` — create/manage login accounts (admin, coach, parent)
 - `/admin/players` — manage players
 - `/admin/coaches` — manage coaches
 - `/admin/practices` — schedule practices
@@ -79,7 +80,8 @@ Each page below is stubbed with placeholder/skeleton UI. The service functions a
 
 #### Admin
 - [ ] `/admin` — replace `—` stat cards with real Firestore counts
-- [ ] `/admin/players` — list players, add player form, edit, deactivate
+- [x] `/admin/users` — list accounts, add user form (admin/coach/parent), creates real Firebase Auth account
+- [x] `/admin/players` — list players, add player form (pick an existing parent account), deactivate/reactivate. Editing existing fields is still pending.
 - [ ] `/admin/coaches` — list coaches, add coach form, edit
 - [ ] `/admin/practices` — list practices, add/edit/cancel practice
 - [ ] `/admin/announcements` — list announcements, create/pin/delete
@@ -98,9 +100,9 @@ Each page below is stubbed with placeholder/skeleton UI. The service functions a
 - [ ] `/parent/attendance` — their kids' attendance history
 
 ### Pending — auth for coaches and parents
-- [ ] Create real Firebase Auth accounts for coaches (currently Firestore-only with fake UIDs)
-- [ ] Create real Firebase Auth accounts for parents (same)
-- [ ] Or build an invite/onboarding flow so they can self-register
+- [x] Admin-driven account creation — `/admin/users` lets an admin create a real Firebase Auth account + Firestore `users/{uid}` profile (and, for coaches, a linked `coaches/{id}` doc) in one step. Uses a secondary Firebase App instance (`src/lib/firebase/adminCreateUser.ts`) so creating another person's account doesn't sign the admin out — needed since this is a static export with no backend to run the Admin SDK.
+- [ ] Convert the placeholder `seed-coach-uid-00x` / `seed-parent-uid-00x` Firestore-only records (from `scripts/seed.mjs`) to real accounts via `/admin/users`, then update the `coaches`/`players` documents that still reference those fake UIDs
+- [ ] Self-serve invite/onboarding flow (not needed now that admin-driven creation exists, but still an option later)
 
 ---
 
@@ -125,6 +127,7 @@ Each page below is stubbed with placeholder/skeleton UI. The service functions a
 | `src/lib/firebase/config.ts` | Firebase app init |
 | `src/lib/firebase/auth.ts` | Firebase Auth instance |
 | `src/lib/firebase/firestore.ts` | Firestore instance + collection notes |
+| `src/lib/firebase/adminCreateUser.ts` | Creates another user's Firebase Auth account from the admin UI without ending the admin's session |
 | `src/lib/firebase/services/` | CRUD service functions per collection |
 | `src/lib/firebase/seed.ts` | Seed data (TypeScript version, for reference) |
 | `scripts/seed.mjs` | Runnable seed script: `node scripts/seed.mjs <adminUID>` |

@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/firestore";
 import { Player } from "@/types";
-import { toISO } from "./_converters";
+import { toISO, clean } from "./_converters";
 
 const COL = "players";
 
@@ -36,7 +36,7 @@ export async function createPlayer(
   data: Omit<Player, "id" | "createdAt">
 ): Promise<Player> {
   const ref = await addDoc(collection(db, COL), {
-    ...data,
+    ...clean(data),
     createdAt: serverTimestamp(),
   });
   return { id: ref.id, ...data, createdAt: new Date().toISOString() };
