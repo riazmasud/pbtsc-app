@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
+import Link from "next/link";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -222,7 +223,12 @@ export default function PlayersPage() {
               {players.map((player) => (
                 <tr key={player.id} className="border-b border-gray-50 last:border-0">
                   <td className="px-4 py-3">
-                    {player.firstName} {player.lastName}
+                    <Link
+                      href={`/admin/players/view?id=${player.id}`}
+                      className="text-green-700 hover:underline"
+                    >
+                      {player.firstName} {player.lastName}
+                    </Link>
                   </td>
                   <td className="px-4 py-3">{player.age}</td>
                   <td className="px-4 py-3">{player.parentName}</td>
