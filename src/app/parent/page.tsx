@@ -1,16 +1,39 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { getUpcomingPractices } from "@/lib/firebase/services/practices";
+import { getAllAnnouncements } from "@/lib/firebase/services/announcements";
+import { Practice, Announcement } from "@/types";
 
-// TODO Phase 2: Fetch next practice, latest announcement, and attendance summary
-// for the logged-in parent's child from Firestore.
+function dayBadge(dateStr: string): { day: string; date: string } {
+  const d = new Date(`${dateStr}T00:00:00`);
+  return {
+    day: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
+    date: String(d.getDate()),
+  };
+}
 
 export default function ParentDashboard() {
   const { user } = useAuth();
   const firstName = user?.displayName?.split(" ")[0] || "there";
+
+  const [nextPractice, setNextPractice] = useState<Practice | null>(null);
+  const [latestAnnouncement, setLatestAnnouncement] = useState<Announcement | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getUpcomingPractices(), getAllAnnouncements()]).then(
+      ([practices, announcements]) => {
+        setNextPractice(practices[0] || null);
+        setLatestAnnouncement(announcements[0] || null);
+        setLoading(false);
+      }
+    );
+  }, []);
 
   return (
     <div>
@@ -21,20 +44,31 @@ export default function ParentDashboard() {
           Next Practice
         </h2>
         <Card className="p-4">
-          {/* TODO Phase 2: Render next upcoming practice */}
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-green-100 rounded-xl flex flex-col items-center justify-center shrink-0">
-              <p className="text-[10px] font-semibold text-green-700">SAT</p>
-              <p className="text-lg font-bold text-green-800">16</p>
+          {loading && <p className="text-sm text-gray-400">Loading…</p>}
+          {!loading && !nextPractice && (
+            <div className="text-center py-5 text-gray-400">
+              <p className="text-3xl mb-2">📅</p>
+              <p className="text-sm">No upcoming practices scheduled.</p>
             </div>
-            <div>
-              <p className="font-semibold text-sm text-gray-900">
-                9:00 – 10:00 AM · Field 3, Main Complex
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">Mr. Shohug</p>
-              <p className="text-xs text-gray-500">Jaylen Johnson</p>
+          )}
+          {!loading && nextPractice && (
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-green-100 rounded-xl flex flex-col items-center justify-center shrink-0">
+                <p className="text-[10px] font-semibold text-green-700">
+                  {dayBadge(nextPractice.date).day}
+                </p>
+                <p className="text-lg font-bold text-green-800">
+                  {dayBadge(nextPractice.date).date}
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-gray-900">
+                  {nextPractice.startTime} – {nextPractice.endTime} · {nextPractice.location}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">{nextPractice.coachName}</p>
+              </div>
             </div>
-          </div>
+          )}
         </Card>
       </section>
 
@@ -43,17 +77,24 @@ export default function ParentDashboard() {
           Latest Announcement
         </h2>
         <Card className="p-4">
-          {/* TODO Phase 2: Render the most recent pinned or latest announcement */}
-          <div className="flex items-center justify-between mb-1">
-            <p className="font-semibold text-sm text-gray-900">
-              🏆 End-of-Season Tournament — Aug 24
-            </p>
-            <span className="text-xs text-gray-400 shrink-0 ml-2">2 days ago</span>
-          </div>
-          <p className="text-sm text-gray-600">
-            Join us for the season-ending tournament at Main Complex. Games start at 9 AM —
-            please arrive 30 minutes early for warm-ups. Snacks provided!
-          </p>
+          {loading && <p className="text-sm text-gray-400">Loading…</p>}
+          {!loading && !latestAnnouncement && (
+            <div className="text-center py-5 text-gray-400">
+              <p className="text-3xl mb-2">📢</p>
+              <p className="text-sm">No announcements yet.</p>
+            </div>
+          )}
+          {!loading && latestAnnouncement && (
+            <>
+              <div className="flex items-center justify-between mb-1">
+                <p className="font-semibold text-sm text-gray-900">{latestAnnouncement.title}</p>
+                <span className="text-xs text-gray-400 shrink-0 ml-2">
+                  {new Date(latestAnnouncement.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">{latestAnnouncement.body}</p>
+            </>
+          )}
         </Card>
       </section>
 
@@ -86,6 +127,24 @@ export default function ParentDashboard() {
               <div>
                 <p className="font-semibold text-sm">Attendance Record</p>
                 <p className="text-xs text-gray-500">Your child's attendance history</p>
+              </div>
+            </Card>
+          </Link>
+          <Link href="/players">
+            <Card className="p-4 flex items-center gap-3 hover:border-green-200 transition-all">
+              <span className="text-2xl">👦</span>
+              <div>
+                <p className="font-semibold text-sm">Players</p>
+                <p className="text-xs text-gray-500">Meet the academy roster</p>
+              </div>
+            </Card>
+          </Link>
+          <Link href="/coaches">
+            <Card className="p-4 flex items-center gap-3 hover:border-green-200 transition-all">
+              <span className="text-2xl">🧑‍🏫</span>
+              <div>
+                <p className="font-semibold text-sm">Coaches</p>
+                <p className="text-xs text-gray-500">Meet the coaching staff</p>
               </div>
             </Card>
           </Link>

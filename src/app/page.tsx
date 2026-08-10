@@ -1,10 +1,23 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { basePath } from "@/lib/basePath";
 import PublicHeader from "@/components/layout/PublicHeader";
 import Card from "@/components/ui/Card";
+import { getAllAnnouncements } from "@/lib/firebase/services/announcements";
+import { Announcement } from "@/types";
 
 export default function HomePage() {
+  const [pinned, setPinned] = useState<Announcement | null>(null);
+
+  useEffect(() => {
+    getAllAnnouncements().then((data) => {
+      setPinned(data.find((a) => a.pinned) || null);
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <PublicHeader />
@@ -26,6 +39,16 @@ export default function HomePage() {
           our roster and coaching staff below, or sign in if you're a registered
           parent, coach, or admin.
         </p>
+
+        {pinned && (
+          <Card className="max-w-sm mx-auto mt-5 p-4 text-left bg-white">
+            <p className="font-semibold text-sm text-gray-900">
+              <span className="text-amber-500 mr-1">📌</span>
+              {pinned.title}
+            </p>
+            <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">{pinned.body}</p>
+          </Card>
+        )}
 
         <Link
           href="/login"

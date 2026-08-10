@@ -11,6 +11,8 @@ const parentNav: NavItem[] = [
   { label: "Schedule", href: "/parent/schedule", icon: "📅" },
   { label: "Announcements", href: "/parent/announcements", icon: "📢" },
   { label: "Attendance", href: "/parent/attendance", icon: "✅" },
+  { label: "Players", href: "/players", icon: "👦" },
+  { label: "Coaches", href: "/coaches", icon: "🧑‍🏫" },
 ];
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
