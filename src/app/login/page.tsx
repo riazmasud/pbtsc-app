@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { basePath } from "@/lib/basePath";
 
 export default function LoginPage() {
   const { login, user } = useAuth();
@@ -41,7 +42,7 @@ export default function LoginPage() {
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Image src="/logo.jpg" alt="PBTSC Logo" width={100} height={100} className="mx-auto mb-2 rounded-full" />
+          <Image src={`${basePath}/logo.jpg`} alt="PBTSC Logo" width={100} height={100} className="mx-auto mb-2 rounded-full" />
           <h1 className="text-2xl font-bold text-gray-900">Sign in to PBTSC</h1>
           <p className="text-gray-500 text-sm mt-1">
             Palm Beach Tigers Soccer Academy
