@@ -103,10 +103,10 @@ Each page below is stubbed with placeholder/skeleton UI. The service functions a
 - [ ] `/coach/attendance` — mark players present/absent for a practice
 
 #### Parent
-- [ ] `/parent` — dashboard with next practice and player count
-- [ ] `/parent/schedule` — upcoming practices list
-- [ ] `/parent/announcements` — announcements feed
-- [ ] `/parent/attendance` — their kids' attendance history
+- [x] `/parent` — real next practice + latest announcement. Player count not shown yet (attendance page groups by kid instead)
+- [x] `/parent/schedule` — real upcoming practices list
+- [x] `/parent/announcements` — real announcements feed
+- [x] `/parent/attendance` — real per-kid attendance summary + history (via `getPlayersByParent`)
 
 ### Public-facing pages (added this round)
 - [x] `/`, `/players`, `/players/view`, `/coaches`, `/coaches/view`, `/announcements` — public, no login required
@@ -124,9 +124,49 @@ Each page below is stubbed with placeholder/skeleton UI. The service functions a
 
 ## Phase 3 — Future
 
-- PWA service worker (`next-pwa`)
 - Push notifications
 - Player/coach photo uploads, practice session photos — blocked on upgrading `pbtsc-dev` to the Firebase **Blaze** plan (Cloud Storage for Firebase requires it to even enable the bucket, as of Google's Oct 2024 policy change — actual usage would stay within the free quota either way). User is deciding when to do this.
+
+### Moving off GitHub Pages to a custom domain
+
+Two options, both keep the Next.js static-export architecture as-is — no code changes either way beyond one env var:
+
+**Option A — Stay on GitHub Pages, just add a custom domain (recommended, smaller change)**
+1. Buy a domain (Namecheap, Cloudflare Registrar, GoDaddy, etc.) — roughly **$10–20/year** for a `.com`.
+2. Add a `public/CNAME` file containing the domain (e.g. `pbtsc.org`).
+3. DNS at the registrar: apex domain → 4 A records to GitHub Pages' IPs (`185.199.108.153`, `.109.153`, `.110.153`, `.111.153`); `www` subdomain → CNAME to `riazmasud.github.io`.
+4. Repo Settings → Pages → enter the custom domain, wait for DNS to verify, enable **Enforce HTTPS** (free auto-provisioned cert).
+5. Stop setting `NEXT_PUBLIC_BASE_PATH` in `.github/workflows/deploy.yml` — a custom domain serves from root, not the `/pbtsc-app/` subpath (this was already designed for — see `next.config.ts`).
+6. **Cost: domain only (~$10–20/yr). Hosting stays free.**
+
+**Option B — Migrate hosting to Firebase Hosting**
+1. Same domain purchase as above.
+2. `npx firebase-tools init hosting` locally — set the public directory to `out`, configure as a single-page app.
+3. `npx firebase-tools deploy --only hosting` (manual), or replace `.github/workflows/deploy.yml` with a Firebase-Hosting deploy step (`FirebaseExtended/action-hosting-deploy`) to keep auto-deploy-on-push.
+4. Firebase Console → Hosting → Add custom domain → follow its guided DNS verification (arguably friendlier than raw DNS setup).
+5. Also drop `NEXT_PUBLIC_BASE_PATH` (serves from root, same as Option A).
+6. **Cost: domain only. Firebase Hosting free (Spark) tier: 10GB storage, 360MB/day transfer — plenty for now, but worth watching once practice-photo uploads are live, since photo-heavy pages eat that quota faster than text/data pages.**
+7. Upside: everything (Auth, Firestore, Storage, Hosting) lives under one Firebase Console instead of split between GitHub and Firebase. Downside: means learning the `firebase` CLI and rebuilding the deploy pipeline that already works today.
+
+**Recommendation**: Option A first — it's strictly less work since the GitHub Actions pipeline already works, and can always move to Option B later without losing anything. Reconsider B if managing two separate dashboards (GitHub + Firebase) becomes annoying in practice.
+
+### PWA — "Add to Home Screen" (not full offline support)
+
+The actual goal ("send parents a URL, they save it as an icon on their phone") only needs a valid web app manifest + real icon files + iOS-specific meta tags — **no service worker required**. A service worker is only needed for offline support or Chrome's install-prompt UI, which isn't what was asked for; skip it for now to keep this simple.
+
+**What's already in place**: `public/manifest.json` already has the right shape (`display: "standalone"`, theme color, name). `src/app/layout.tsx` already links it via the metadata API.
+
+**What's actually broken right now** (found while researching this — worth fixing regardless of timing):
+- `public/icons/icon-192.png` and `icon-512.png` don't exist — `manifest.json` references files that were never created.
+- The manifest `<link>` tag isn't basePath-aware (same class of bug the logo had) — on the current `/pbtsc-app/` GitHub Pages subpath, `<link rel="manifest" href="/manifest.json">` actually 404s right now. This fixes itself for free if/when a custom domain is added (Option A/B above serve from root), otherwise needs the same `basePath` prefix treatment as `src/lib/basePath.ts` already does for the logo.
+
+**Steps**:
+1. Export the PBTSC logo as real `192×192` and `512×512` PNG icon files into `public/icons/` (a "maskable" safe-zone version — logo content within the center ~80% — renders better as an Android adaptive icon, but a plain square works fine as a first pass).
+2. Fix the manifest `<link>` (and `manifest.json`'s own `start_url`/icon paths) to be basePath-aware, if still on the GitHub Pages subpath when this is done.
+3. Add `<link rel="apple-touch-icon" href="...">` plus `<meta name="apple-mobile-web-app-capable" content="yes">` to `src/app/layout.tsx` — iOS Safari's "Add to Home Screen" relies on these more than on `manifest.json`.
+4. Test: on iPhone, Safari → Share → Add to Home Screen; on Android, Chrome should offer an "Install" banner automatically once the manifest + icons are valid.
+
+**Complexity: Low.** Mostly asset creation (icon files) plus a handful of lines in `layout.tsx` — no new dependencies, no service worker, no `next-pwa` package needed for this scope.
 
 ## Out of scope (all phases)
 - Parent payments / Stripe
