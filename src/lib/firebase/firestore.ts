@@ -1,7 +1,20 @@
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, getFirestore, Firestore } from "firebase/firestore";
 import { app } from "./config";
 
-export const db = getFirestore(app);
+// experimentalAutoDetectLongPolling works around a known Firestore issue on
+// Safari/iOS (and some WiFi networks/proxies) where the default WebChannel
+// streaming connection stalls for several seconds before falling back —
+// this detects that case and uses long-polling immediately instead.
+// Guarded with try/catch since initializeFirestore throws if called twice
+// on the same app (can happen during dev-mode hot reload).
+let db: Firestore;
+try {
+  db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+} catch {
+  db = getFirestore(app);
+}
+
+export { db };
 
 // All Firestore reads and writes go through the typed service layer:
 //   src/lib/firebase/services/users.ts
