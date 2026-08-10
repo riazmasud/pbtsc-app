@@ -34,7 +34,12 @@ export default function CoachDashboard() {
             <Card className="p-4 flex items-center gap-3 hover:border-green-200 transition-all">
               <span className="text-2xl">📅</span>
               <div>
-                <p className="font-semibold text-sm">My Practices</p>
+                <p className="font-semibold text-sm flex items-center gap-2">
+                  My Practices
+                  <span className="text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </p>
                 <p className="text-xs text-gray-500">View your practice schedule</p>
               </div>
             </Card>
@@ -43,7 +48,12 @@ export default function CoachDashboard() {
             <Card className="p-4 flex items-center gap-3 hover:border-green-200 transition-all">
               <span className="text-2xl">✅</span>
               <div>
-                <p className="font-semibold text-sm">Mark Attendance</p>
+                <p className="font-semibold text-sm flex items-center gap-2">
+                  Mark Attendance
+                  <span className="text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </p>
                 <p className="text-xs text-gray-500">Record player attendance for a practice</p>
               </div>
             </Card>

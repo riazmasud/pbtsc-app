@@ -85,22 +85,22 @@
 
 ### Pending — connect pages to Firestore
 
-Each page below is stubbed with placeholder/skeleton UI. The service functions already exist in `src/lib/firebase/services/` — pages just need to call them.
+Each page below still needs real Firestore wiring. As of this round, unbuilt pages no longer show fake pulsing-skeleton placeholders or dead buttons — they use `src/components/ui/ComingSoon.tsx` for an honest "Coming Soon" state instead, and any nav/dashboard link pointing at one of them shows a small amber "Soon" badge (see `/admin` and `/coach` dashboards) so it's clear before you click.
 
 #### Admin
-- [ ] `/admin` — replace `—` stat cards with real Firestore counts
+- [x] `/admin` — real stat counts (players, active coaches, upcoming practices, announcements)
 - [x] `/admin/users` — list accounts, add user form (admin/coach/parent), creates real Firebase Auth account
 - [x] `/admin/players` — list players, add player form (pick an existing parent account, set age group), deactivate/reactivate. Editing existing fields is still pending.
-- [x] `/admin/coaches` — list coaches, inline edit for phone/bio. No separate "add coach" — coach accounts (and their linked `coaches` doc) are created via `/admin/users`.
-- [ ] `/admin/practices` — list practices, add/edit/cancel practice
-- [x] `/admin/announcements` — list announcements, create/pin/delete
-- [ ] `/admin/attendance` — view attendance by practice
-- [ ] `/admin/coach-payments` — list payments, mark as paid
+- [x] `/admin/coaches` — list coaches, inline edit for phone/bio, activate/deactivate. No separate "add coach" — coach accounts (and their linked `coaches` doc) are created via `/admin/users`.
+- [ ] `/admin/practices` — "Coming Soon" state. Needs: list practices, add/edit/cancel practice
+- [x] `/admin/announcements` — list announcements, create/edit/pin/delete
+- [ ] `/admin/attendance` — "Coming Soon" state. Needs: view attendance by practice
+- [ ] `/admin/coach-payments` — "Coming Soon" state. Needs: list payments, mark as paid
 
 #### Coach
-- [ ] `/coach` — dashboard with upcoming practices count
-- [ ] `/coach/practices` — list their assigned practices
-- [ ] `/coach/attendance` — mark players present/absent for a practice
+- [ ] `/coach` — dashboard shell exists (own layout/nav/auth-gate), "Next Practice" card is still static placeholder text, not wired to Firestore
+- [ ] `/coach/practices` — "Coming Soon" state. Needs: list their assigned practices
+- [ ] `/coach/attendance` — "Coming Soon" state. Needs: mark players present/absent for a practice
 
 #### Parent
 - [x] `/parent` — real next practice + latest announcement. Player count not shown yet (attendance page groups by kid instead)
