@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { Suspense, useState, useEffect, FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -9,10 +10,14 @@ import { createCoach } from "@/lib/firebase/services/coaches";
 import { createAuthAccount } from "@/lib/firebase/adminCreateUser";
 import { UserProfile, UserRole } from "@/types";
 
-export default function UsersPage() {
+function UsersPageInner() {
+  const searchParams = useSearchParams();
+  const presetRole = searchParams.get("role");
+  const isValidRole = presetRole === "admin" || presetRole === "coach" || presetRole === "parent";
+
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(isValidRole);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,7 +26,8 @@ export default function UsersPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [role, setRole] = useState<UserRole>("parent");
+  const [bio, setBio] = useState("");
+  const [role, setRole] = useState<UserRole>(isValidRole ? (presetRole as UserRole) : "parent");
 
   async function loadUsers() {
     setLoading(true);
@@ -40,6 +46,7 @@ export default function UsersPage() {
     setEmail("");
     setPassword("");
     setPhone("");
+    setBio("");
     setRole("parent");
     setError("");
   }
@@ -63,6 +70,7 @@ export default function UsersPage() {
           lastName,
           email,
           phone: phone || undefined,
+          bio: bio || undefined,
           uid,
           active: true,
         });
@@ -166,6 +174,21 @@ export default function UsersPage() {
               </div>
             </div>
 
+            {role === "coach" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Coach bio (optional, shown on the public coaches page)
+                </label>
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={3}
+                  placeholder="Coaching background, certifications, fun facts…"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                />
+              </div>
+            )}
+
             {error && (
               <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                 {error}
@@ -213,5 +236,13 @@ export default function UsersPage() {
         {loading && <div className="text-center py-8 text-gray-400 text-sm">Loading…</div>}
       </Card>
     </div>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <Suspense fallback={<p className="text-sm text-gray-400">Loading…</p>}>
+      <UsersPageInner />
+    </Suspense>
   );
 }

@@ -104,12 +104,12 @@ const COACHES = [
 ];
 
 const PLAYERS = [
-  { firstName: "Jaylen",   lastName: "Johnson", dateOfBirth: "2016-03-12", age: 8,  parentId: PARENT_1_UID, parentName: "David Johnson", active: true },
-  { firstName: "Brianna",  lastName: "Johnson", dateOfBirth: "2018-07-22", age: 6,  parentId: PARENT_1_UID, parentName: "David Johnson", active: true },
-  { firstName: "Lucas",    lastName: "Garcia",  dateOfBirth: "2015-11-05", age: 9,  parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
-  { firstName: "Isabella", lastName: "Garcia",  dateOfBirth: "2017-04-18", age: 7,  parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
-  { firstName: "Elijah",   lastName: "Thompson",dateOfBirth: "2014-09-30", age: 10, parentId: PARENT_1_UID, parentName: "David Johnson", active: true, notes: "Goalkeeper" },
-  { firstName: "Amara",    lastName: "Williams",dateOfBirth: "2019-01-14", age: 5,  parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
+  { firstName: "Jaylen",   lastName: "Johnson", dateOfBirth: "2016-03-12", age: 8,  ageGroup: "U8",  parentId: PARENT_1_UID, parentName: "David Johnson", active: true },
+  { firstName: "Brianna",  lastName: "Johnson", dateOfBirth: "2018-07-22", age: 6,  ageGroup: "U6",  parentId: PARENT_1_UID, parentName: "David Johnson", active: true },
+  { firstName: "Lucas",    lastName: "Garcia",  dateOfBirth: "2015-11-05", age: 9,  ageGroup: "U10", parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
+  { firstName: "Isabella", lastName: "Garcia",  dateOfBirth: "2017-04-18", age: 7,  ageGroup: "U8",  parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
+  { firstName: "Elijah",   lastName: "Thompson",dateOfBirth: "2014-09-30", age: 10, ageGroup: "U10", parentId: PARENT_1_UID, parentName: "David Johnson", active: true, notes: "Goalkeeper" },
+  { firstName: "Amara",    lastName: "Williams",dateOfBirth: "2019-01-14", age: 5,  ageGroup: "U6",  parentId: PARENT_2_UID, parentName: "Maria Garcia",  active: true },
 ];
 
 const PRACTICES = [

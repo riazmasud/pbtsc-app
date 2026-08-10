@@ -12,7 +12,7 @@ import {
   reactivatePlayer,
 } from "@/lib/firebase/services/players";
 import { getUsersByRole } from "@/lib/firebase/services/users";
-import { Player, UserProfile } from "@/types";
+import { Player, UserProfile, AgeGroup, AGE_GROUPS } from "@/types";
 
 function calcAge(dateOfBirth: string): number {
   const birth = new Date(dateOfBirth);
@@ -34,6 +34,7 @@ export default function PlayersPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>("U8");
   const [notes, setNotes] = useState("");
   const [parentId, setParentId] = useState("");
 
@@ -56,6 +57,7 @@ export default function PlayersPage() {
     setFirstName("");
     setLastName("");
     setDateOfBirth("");
+    setAgeGroup("U8");
     setNotes("");
     setParentId("");
     setError("");
@@ -78,6 +80,7 @@ export default function PlayersPage() {
         lastName,
         dateOfBirth,
         age: calcAge(dateOfBirth),
+        ageGroup,
         parentId: parent.uid,
         parentName: parent.displayName,
         notes: notes || undefined,
@@ -165,6 +168,21 @@ export default function PlayersPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Age group</label>
+                <select
+                  value={ageGroup}
+                  onChange={(e) => setAgeGroup(e.target.value as AgeGroup)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                >
+                  {AGE_GROUPS.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Parent</label>
                 <select
                   required
@@ -214,6 +232,7 @@ export default function PlayersPage() {
               <tr className="border-b border-gray-100">
                 <th className="text-left px-4 py-3 text-gray-500 font-medium">Name</th>
                 <th className="text-left px-4 py-3 text-gray-500 font-medium">Age</th>
+                <th className="text-left px-4 py-3 text-gray-500 font-medium">Group</th>
                 <th className="text-left px-4 py-3 text-gray-500 font-medium">Parent</th>
                 <th className="text-left px-4 py-3 text-gray-500 font-medium">Status</th>
                 <th className="px-4 py-3"></th>
@@ -231,6 +250,7 @@ export default function PlayersPage() {
                     </Link>
                   </td>
                   <td className="px-4 py-3">{player.age}</td>
+                  <td className="px-4 py-3">{player.ageGroup}</td>
                   <td className="px-4 py-3">{player.parentName}</td>
                   <td className="px-4 py-3">
                     <span

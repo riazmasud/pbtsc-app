@@ -19,14 +19,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Public roster page reads this without login — see the NOTE on the
+    // Player type in src/types/index.ts before adding new fields here.
     match /players/{id} {
-      allow read: if isAdmin() || isCoach() ||
-        (isParent() && resource.data.parentId == request.auth.uid);
+      allow read: if true;
       allow write: if isAdmin();
     }
 
+    // Public coaches page reads this without login — see the NOTE on the
+    // Coach type in src/types/index.ts before adding new fields here.
     match /coaches/{id} {
-      allow read: if signedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
@@ -35,8 +38,9 @@ service cloud.firestore {
       allow write: if isAdmin() || ownsCoachDoc(resource.data.coachId);
     }
 
+    // Public announcements page reads this without login.
     match /announcements/{id} {
-      allow read: if signedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 

@@ -11,7 +11,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/firestore";
-import { Player } from "@/types";
+import { Player, AgeGroup } from "@/types";
 import { toISO, clean } from "./_converters";
 
 const COL = "players";
@@ -23,6 +23,8 @@ function docToPlayer(id: string, data: Record<string, unknown>): Player {
     lastName: data.lastName as string,
     dateOfBirth: data.dateOfBirth as string,
     age: data.age as number,
+    ageGroup: data.ageGroup as AgeGroup,
+    photoUrl: data.photoUrl as string | undefined,
     parentId: data.parentId as string,
     parentName: data.parentName as string,
     notes: data.notes as string | undefined,

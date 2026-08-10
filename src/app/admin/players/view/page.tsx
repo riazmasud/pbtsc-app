@@ -60,6 +60,7 @@ function PlayerDetail() {
           />
           <Card className="p-4">
             <Row label="Age" value={player.age} />
+            <Row label="Age group" value={player.ageGroup} />
             <Row label="Date of birth" value={player.dateOfBirth} />
             <Row label="Parent" value={player.parentName} />
             <Row label="Status" value={player.active ? "Active" : "Inactive"} />

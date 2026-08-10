@@ -2,6 +2,9 @@
 
 export type UserRole = "admin" | "coach" | "parent";
 
+export const AGE_GROUPS = ["U6", "U8", "U10", "U12", "U14", "U16", "U18"] as const;
+export type AgeGroup = (typeof AGE_GROUPS)[number];
+
 // ─── Auth session (in-memory, used by AuthContext) ────────────────────────────
 
 export interface AppUser {
@@ -26,28 +29,43 @@ export interface UserProfile {
   createdAt: string;
 }
 
-/** Firestore: players/{id} */
+/**
+ * Firestore: players/{id}
+ * NOTE: this collection is publicly readable (see firestore.rules) so the
+ * roster can be shown without login — dateOfBirth/notes/parentId/parentName
+ * are still stored here (existing admin flows need them), just never
+ * rendered on any public-facing page. Keep it that way; do not add more
+ * sensitive fields to this doc without revisiting the public/private split.
+ */
 export interface Player {
   id: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;  // YYYY-MM-DD
   age: number;
-  parentId: string;     // uid of the parent UserProfile
-  parentName: string;   // denormalized for quick display
+  ageGroup: AgeGroup;
+  photoUrl?: string;     // placeholder for now — Storage upload is a future phase
+  parentId: string;      // uid of the parent UserProfile
+  parentName: string;    // denormalized for quick display
   notes?: string;
   active: boolean;
   createdAt: string;
 }
 
-/** Firestore: coaches/{id} */
+/**
+ * Firestore: coaches/{id}
+ * NOTE: publicly readable (see firestore.rules) — email/phone are stored
+ * here but never rendered on any public-facing page.
+ */
 export interface Coach {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
-  uid: string;          // Firebase Auth uid linked to this coach
+  bio?: string;
+  photoUrl?: string;     // placeholder for now — Storage upload is a future phase
+  uid: string;           // Firebase Auth uid linked to this coach
   active: boolean;
   createdAt: string;
 }

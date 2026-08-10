@@ -23,6 +23,8 @@ function docToCoach(id: string, data: Record<string, unknown>): Coach {
     lastName: data.lastName as string,
     email: data.email as string,
     phone: data.phone as string | undefined,
+    bio: data.bio as string | undefined,
+    photoUrl: data.photoUrl as string | undefined,
     uid: data.uid as string,
     active: data.active as boolean,
     createdAt: toISO(data.createdAt as never),
@@ -79,7 +81,7 @@ export async function updateCoach(
   id: string,
   data: Partial<Omit<Coach, "id" | "createdAt">>
 ): Promise<void> {
-  await updateDoc(doc(db, COL, id), data);
+  await updateDoc(doc(db, COL, id), clean(data));
 }
 
 /** Soft-deletes a coach by setting active = false. */
